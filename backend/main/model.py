@@ -1,17 +1,16 @@
 from main import db
 from flask_marshmallow import Marshmallow
-from sqlalchemy.dialects.mysql import BIGINT, BINARY, BIT, BLOB, BOOLEAN, CHAR, DATE, DATETIME, DECIMAL, DECIMAL, DOUBLE, ENUM, FLOAT, INTEGER, LONGBLOB, LONGTEXT, MEDIUMBLOB, MEDIUMINT, MEDIUMTEXT, NCHAR, NUMERIC, NVARCHAR, REAL, SET, SMALLINT, TEXT, TIME, TIMESTAMP,TINYBLOB, TINYINT, TINYTEXT, VARBINARY, VARCHAR, YEAR
-
+from sqlalchemy.dialects.sqlite import BLOB, BOOLEAN, CHAR, DATE, DATETIME, DECIMAL, FLOAT, INTEGER, NUMERIC, SMALLINT, TEXT, TIME, TIMESTAMP, VARCHAR
 from main import ma
 
 
 class User(db.Model):
-    user_id = db.Column(db.String(255))
+    user_id = db.Column(db.Integer(10))
     user_type = db.Column(db.String(255))
     name = db.Column(db.String(255))
     phone = db.Column(db.String(255), primary_key=True)
     is_otp_verified = db.Column(db.Boolean)
-    address_id = db.Column(db.String(255))
+    address_id = db.Column(db.Integer(10))
     email = db.Column(db.String(255))
     is_email_verified = db.Column(db.Boolean)
     password = db.Column(db.String(255))
@@ -49,17 +48,17 @@ users_schema = UserSchema(many=True)
 
 
 class Order(db.Model):                                                                
-    order_id = db.Column(db.String(255), primary_key=True)                                        
-    menu_data_dump = db.Column(db.NVARCHAR) 
-    chef_id = db.Column(db.String(255), db.ForeignKey('Schedule.chef_id'))                                    
+    order_id = db.Column(db.Integer(10), primary_key=True)                                        
+    menu_data_dump = db.Column(db.String) 
+    chef_id = db.Column(db.Integer(10), db.ForeignKey('Schedule.chef_id'))                                    
     merchant_id = db.Column(db.String(255), db.ForeignKey('Schedule.merchant_id')) 
     amount = db.Column(db.Float(10))                       
     total_amount = db.Column(db.Float(10))  
     is_paid = db.Column(db.Boolean)
-
+    is_delivered = db.Column(db.Boolean)
                                         
 
-    def __init__(self, order_id, menu_data_dump, chef_id, merchant_id, amount, total_amount, is_paid):
+    def __init__(self, order_id, menu_data_dump, chef_id, merchant_id, amount, total_amount, is_paid, is_delivered):
         self.order_id = order_id
         self.menu_data_dump = menu_data_dump
         self.chef_id = chef_id
@@ -67,12 +66,12 @@ class Order(db.Model):
         self.amount = amount
         self.total_amount = total_amount
         self.is_paid = is_paid
-
+        self.is_delivered = is_delivered
 
 class OrderSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('order_id', 'menu_data_dump', 'chef_id', 'merchant_id', 'amount', 'total_amount', 'is_paid')
+        fields = ('order_id', 'menu_data_dump', 'chef_id', 'merchant_id', 'amount', 'total_amount', 'is_paid', 'is_delivered')
 
 
 order_schema = OrderSchema()
@@ -85,8 +84,8 @@ orders_schema = OrderSchema(many=True)
 
 
 class Menu(db.Model):                                                                
-    menu_id = db.Column(db.String(255), primary_key=True)                                        
-    chef_id = db.Column(db.String(255), db.ForeignKey('Schedule.chef_id'))                                    
+    menu_id = db.Column(db.Integer(10), primary_key=True)                                        
+    chef_id = db.Column(db.Integer(10), db.ForeignKey('Schedule.chef_id'))                                    
     food_item_name = db.Column(db.String(255))                                      
     price = db.Column(db.Float(10))                                   
     day = db.Column(db.String(255))  
@@ -117,16 +116,17 @@ menus_schema = MenuSchema(many=True)
 
 
 class Schedule(db.Model):         
-    schedule_id = db.Column(db.String(255), primary_key=True)                                                                                       
-    menu_data = db.Column(db.String(255))                                        
+    schedule_id = db.Column(db.Integer(10), primary_key=True)                                                                                       
+    menu_data_dump = db.Column(db.NVARCHAR) 
     chef_id = db.Column(db.String(255))                                    
-    merchant_id = db.Column(db.String(255))                                      
+    merchant_id = db.Column(db.Integer(10))                                      
     amount = db.Column(db.Float(10))                       
     total_amount = db.Column(db.Float(10))                       
     date  = db.Column(db.DateTime)      
 
-    def __init__(self, menu_data, chef_id, merchant_id, amount, total_amount, date):
-        self.menu_data = menu_data
+    def __init__(self, schedule_id, menu_data_dump, chef_id, merchant_id, amount, total_amount, date):
+        self.schedule_id = schedule_id
+        self.menu_data_dump = menu_data_dump
         self.chef_id = chef_id
         self.merchant_id = merchant_id
         self.amount = amount
@@ -139,7 +139,7 @@ class Schedule(db.Model):
 class ScheduleSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('menu_data', 'chef_id', 'merchant_id', 'amount', 'total_amount', 'date')
+        fields = ('schedule_id', 'menu_data_dump', 'chef_id', 'merchant_id', 'amount', 'total_amount', 'date')
 
 
 schedule_schema = ScheduleSchema()
@@ -152,11 +152,11 @@ schedules_schema = ScheduleSchema(many=True)
 
 
 class Address(db.Model):                                                                
-    address_id = db.Column(db.String(255), primary_key=True)                                        
+    address_id = db.Column(db.Integer(10), primary_key=True)                                        
     user_type = db.Column(db.String(255))                                    
-    user_id = db.Column(db.String(255), db.ForeignKey('User.user_id'))
-    lat = db.Column(db.String(255))                                    
-    longitude = db.Column(db.String(255))    
+    user_id = db.Column(db.Integer(10), db.ForeignKey('User.user_id'))
+    latitude = db.Column(db.Float(255))                                    
+    longitude = db.Column(db.Float(255))    
     address_line_one = db.Column(db.String(255))    
     address_line_two = db.Column(db.String(255))    
     pincode = db.Column(db.String(255))    
@@ -167,11 +167,11 @@ class Address(db.Model):
 
       
 
-    def __init__(self, address_id, user_type, hotel_id, lat, longitude, address_line_one, address_line_two, pincode, city, landmark):
+    def __init__(self, address_id, user_type, hotel_id, latitude, longitude, address_line_one, address_line_two, pincode, city, landmark):
         self.address_id = address_id
         self.user_type = user_type
         self.hotel_id = hotel_id
-        self.lat = lat
+        self.latitude = latitude
         self.longitude = longitude
         self.address_line_one = address_line_one
         self.address_line_two = address_line_two
@@ -183,7 +183,7 @@ class Address(db.Model):
 class AddressSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('address_id', 'user_type', 'hotel_id', 'lat', 'longitude', 'address_line_one', 'address_line_two', 'pincode', 'city', 'landmark')
+        fields = ('address_id', 'user_type', 'hotel_id', 'latitude', 'longitude', 'address_line_one', 'address_line_two', 'pincode', 'city', 'landmark')
 
 
 address_schema = AddressSchema()
