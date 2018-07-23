@@ -1,8 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-# import pymysql
-# pymysql.install_as_MySQLdb()
 import os
 
 app = Flask(__name__)

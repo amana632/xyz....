@@ -20,8 +20,8 @@ class User(db.Model):
 
 
 
-    def __init__(self, userid, user_type, name, phone, is_otp_verified, address_id, email, is_email_verified, password, area):
-        self.userid = userid
+    def __init__(self, user_id, user_type, name, phone, is_otp_verified, address_id, email, is_email_verified, password, area):
+        self.user_id = user_id
         self.user_type = user_type
         self.name = name
         self.phone = phone
@@ -38,7 +38,7 @@ class User(db.Model):
 class UserSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('userid', 'user_type', 'name', 'phone', 'is_otp_verified', 'address_id', 'email', 'is_email_verified', 'password', 'area')
+        fields = ('user_id', 'user_type', 'name', 'phone', 'is_otp_verified', 'address_id', 'email', 'is_email_verified', 'password', 'area')
 
 
 user_schema = UserSchema()
