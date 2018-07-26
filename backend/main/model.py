@@ -5,12 +5,13 @@ from main import ma
 
 
 class User(db.Model):
-    user_id = db.Column(db.Integer(10))
+    __tablename__ = 'user'
+    user_id = db.Column(db.Integer)
     user_type = db.Column(db.String(255))
     name = db.Column(db.String(255))
     phone = db.Column(db.String(255), primary_key=True)
     is_otp_verified = db.Column(db.Boolean)
-    address_id = db.Column(db.Integer(10))
+    address_id = db.Column(db.Integer)
     email = db.Column(db.String(255))
     is_email_verified = db.Column(db.Boolean)
     password = db.Column(db.String(255))
@@ -48,10 +49,10 @@ users_schema = UserSchema(many=True)
 
 
 class Order(db.Model):                                                                
-    order_id = db.Column(db.Integer(10), primary_key=True)                                        
+    order_id = db.Column(db.Integer, primary_key=True)                                        
     menu_data_dump = db.Column(db.String) 
-    chef_id = db.Column(db.Integer(10), db.ForeignKey('Schedule.chef_id'))                                    
-    merchant_id = db.Column(db.String(255), db.ForeignKey('Schedule.merchant_id')) 
+    chef_id = db.Column(db.Integer, db.ForeignKey('schedule.chef_id'))                                    
+    merchant_id = db.Column(db.String, db.ForeignKey('schedule.merchant_id')) 
     amount = db.Column(db.Float(10))                       
     total_amount = db.Column(db.Float(10))  
     is_paid = db.Column(db.Boolean)
@@ -84,8 +85,8 @@ orders_schema = OrderSchema(many=True)
 
 
 class Menu(db.Model):                                                                
-    menu_id = db.Column(db.Integer(10), primary_key=True)                                        
-    chef_id = db.Column(db.Integer(10), db.ForeignKey('Schedule.chef_id'))                                    
+    menu_id = db.Column(db.Integer, primary_key=True)                                        
+    chef_id = db.Column(db.Integer, db.ForeignKey('schedule.chef_id'))                                    
     food_item_name = db.Column(db.String(255))                                      
     price = db.Column(db.Float(10))                                   
     day = db.Column(db.String(255))  
@@ -116,10 +117,11 @@ menus_schema = MenuSchema(many=True)
 
 
 class Schedule(db.Model):         
-    schedule_id = db.Column(db.Integer(10), primary_key=True)                                                                                       
+    __tablename__ = 'schedule'
+    schedule_id = db.Column(db.Integer, primary_key=True)                                                                                       
     menu_data_dump = db.Column(db.NVARCHAR) 
     chef_id = db.Column(db.String(255))                                    
-    merchant_id = db.Column(db.Integer(10))                                      
+    merchant_id = db.Column(db.String)                                      
     amount = db.Column(db.Float(10))                       
     total_amount = db.Column(db.Float(10))                       
     date  = db.Column(db.DateTime)      
@@ -152,9 +154,9 @@ schedules_schema = ScheduleSchema(many=True)
 
 
 class Address(db.Model):                                                                
-    address_id = db.Column(db.Integer(10), primary_key=True)                                        
+    address_id = db.Column(db.Integer, primary_key=True)                                        
     user_type = db.Column(db.String(255))                                    
-    user_id = db.Column(db.Integer(10), db.ForeignKey('User.user_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     latitude = db.Column(db.Float(255))                                    
     longitude = db.Column(db.Float(255))    
     address_line_one = db.Column(db.String(255))    
