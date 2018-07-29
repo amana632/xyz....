@@ -1,31 +1,34 @@
+
 from flask import request, jsonify
 from main import app
 from flask_marshmallow import Marshmallow
 from main import db
 from main.model import User, UserSchema, user_schema, users_schema, Order, OrderSchema, order_schema, orders_schema, Menu, MenuSchema, menu_schema, menus_schema, Schedule, ScheduleSchema, schedule_schema, schedules_schema, Address, AddressSchema, address_schema, addresss_schema
+from datetime import datetime
 
 @app.route("/isRegisteredUser/<phone>", methods=["GET"])
 def isRegisteredUser(phone):
     data = User.query.get(phone)
     if (data.phone != phone) :
-        return False
+        return "False"
     else :
-        return True
+        return "True"
 
 @app.route("/isValidUser", methods=["GET"])
 def isValidUser():
-    phone = request.form['phone']
-    password = request.form['password']
-    user_type = request.form['user_type']
+    phone = request.args['phone']
+    password = request.args['password']
+    user_type = request.args['user_type']
 
 
 
     data = User.query.get(phone)
+    # return user_schema.jsonify(data)
 
-    if(data.password == password & data.user_type == user_type) :
-        return True
+    if(data.password == password and data.user_type == user_type) :
+        return "True"
     else :
-        return False
+        return "False"
 
 
 
@@ -36,10 +39,10 @@ def doRegistration():
     user_type = request.form['user_type']
     name = request.form['name']
     phone = request.form['phone']
-    is_otp_verified = request.form['is_otp_verified']
+    is_otp_verified = int(request.form['is_otp_verified'])
     address_id = request.form['address_id']
     email = request.form['email']
-    is_email_verified = request.form['is_email_verified']
+    is_email_verified = int(request.form['is_email_verified'])
     password = request.form['password']
     area = request.form['area']
 
@@ -47,7 +50,7 @@ def doRegistration():
 
     db.session.add(new_user)
     db.session.commit()
-    return jsonify(new_user)
+    return "True"
 
 
 
@@ -67,10 +70,10 @@ def reg_update(phone):
     user_type = request.form['user_type']
     name = request.form['name']
     phone = request.form['phone']
-    is_otp_verified = request.form['is_otp_verified']
+    is_otp_verified = int(request.form['is_otp_verified'])
     address_id = request.form['address_id']
     email = request.form['email']
-    is_email_verified = request.form['is_email_verified']
+    is_email_verified = int(request.form['is_email_verified'])
     password = request.form['password']
     area = request.form['area']
 
@@ -111,9 +114,12 @@ def addSchedule():
     menu_data_dump = request.form['menu_data_dump']
     chef_id = request.form['chef_id']                          
     merchant_id = request.form['merchant_id']                                    
-    amount = request.form['amount_id']             
+    amount = request.form['amount']             
     total_amount = request.form['total_amount']                     
-    date  = request.form['date']
+    x  = request.form['date']
+    date = datetime.strptime(x , '%b %d %Y %I:%M%p')
+    #expected format --   Jun 1 2005  1:33PM
+
 
 
     new_schedule = Schedule(schedule_id, menu_data_dump, chef_id, merchant_id, amount, total_amount, date)
@@ -122,6 +128,11 @@ def addSchedule():
     db.session.commit()
     return jsonify(new_schedule)
 
+@app.route("/getSchedule", methods=["GET"])
+def get_schedule():
+    all_schedules = Schedule.query.all()
+    result = schedules_schema.dump(all_schedules)
+    return jsonify(result.data)
 
 @app.route("/getSchedule/<phone>", methods=["GET"])
 def schedule_detail(phone):
@@ -175,8 +186,8 @@ def addOrder():
     merchant_id = request.form['merchant_id']            
     amount = request.form['amount']            
     total_amount = request.form['total_amount']            
-    is_paid = request.form['is_paid']            
-    is_delivered = request.form['is_delievered']            
+    is_paid = int(request.form['is_paid'])           
+    is_delivered = int(request.form['is_delievered'])         
     
     
     
@@ -212,7 +223,7 @@ def addMenu():
     food_item_name = request.form['food_item_name']                                             
     price = request.form['price']                                         
     day = request.form['day']            
-    is_active = request.form['is_active']                                                                         
+    is_active = int(request.form['is_active'])                                                                         
     photo = request.form['photo']            
     
     new_menu = Menu( menu_id, chef_id, food_item_name, price, day, is_active, photo)
@@ -240,7 +251,7 @@ def menu_update(phone):
     food_item_name = request.form['food_item_name']                                             
     price = request.form['price']                                         
     day = request.form['day']            
-    is_active = request.form['is_active']                                                                         
+    is_active = int(request.form['is_active'])                                                                         
     photo = request.form['photo']     
 
 
@@ -255,5 +266,4 @@ def menu_update(phone):
 
     db.session.commit()
     return menu_schema.jsonify(menu)
-
 

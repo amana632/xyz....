@@ -1,6 +1,7 @@
 from main import db
 from flask_marshmallow import Marshmallow
 from sqlalchemy.dialects.sqlite import BLOB, BOOLEAN, CHAR, DATE, DATETIME, DECIMAL, FLOAT, INTEGER, NUMERIC, SMALLINT, TEXT, TIME, TIMESTAMP, VARCHAR
+from datetime import datetime
 from main import ma
 
 
