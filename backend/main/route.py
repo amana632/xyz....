@@ -141,7 +141,8 @@ def get_schedule():
 @app.route("/getSchedule/<phone>", methods=["GET"])
 def schedule_detail(phone):
     user = User.query.get(phone)
-    schedule = Schedule.query.get(user.user_id)
+    chef_id = user.user_id 
+    schedule = Schedule.query.get(chef_id)
     return schedule_schema.jsonify(schedule)
 
 
@@ -150,7 +151,8 @@ def schedule_detail(phone):
 @app.route("/updateSchedule/<phone>", methods=["PUT"])
 def schedule_update(phone):
     user = User.query.get(phone)
-    schedule = Schedule.query.get(user.user_id)
+    chef_id = user.user_id 
+    schedule = Schedule.query.get(chef_id)
     schedule_id = request.form['schedule_id']                                                                                    
     menu_data_dump = request.form['menu_data_dump']
     chef_id = request.form['chef_id']                          
@@ -175,7 +177,8 @@ def schedule_update(phone):
 @app.route("/deleteSchedule/<phone>", methods=["DELETE"])
 def schedule_delete(phone):
     user = User.query.get(phone)
-    schedule = Schedule.query.get(user.user_id)
+    chef_id = user.user_id 
+    schedule = Schedule.query.get(chef_id)
     db.session.delete(schedule)
     db.session.commit()
 
@@ -208,7 +211,8 @@ def addOrder():
 @app.route("/getUserOrder/<phone>", methods=["GET"])
 def orders_detail(phone):
     user = User.query.get(phone)
-    order = Order.query.get(user.user_id)
+    chef_id = user.user_id 
+    order = Order.query.get(chef_id)
     return order_schema.jsonify(orders)
 
 
@@ -246,14 +250,18 @@ def addMenu():
 @app.route("/getMenu/<phone>", methods=["GET"])
 def menus_detail(phone):
     user = User.query.get(phone)
-    menus = Menu.query.get(user.user_id)
+    chef_id = user.user_id 
+
+    menus = Menu.query.get(chef_id)
     return menu_schema.jsonify(menus)
 
 
 @app.route("/updateMenu/<phone>", methods=["PUT"])
 def menu_update(phone):
     user = User.query.get(phone)
-    menus = Menu.query.get(user.user_id)
+    chef_id = user.user_id 
+
+    menus = Menu.query.get(chef_id)
 
     menu_id = request.form['menu_id']                              
     chef_id = request.form['chef_id']                                               
