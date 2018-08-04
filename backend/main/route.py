@@ -6,6 +6,10 @@ from main import db
 from main.model import User, UserSchema, user_schema, users_schema, Order, OrderSchema, order_schema, orders_schema, Menu, MenuSchema, menu_schema, menus_schema, Schedule, ScheduleSchema, schedule_schema, schedules_schema, Address, AddressSchema, address_schema, addresss_schema
 from datetime import datetime
 
+
+@app.route("/")
+def func():
+    return "working"
 @app.route("/isRegisteredUser/<phone>", methods=["GET"])
 def isRegisteredUser(phone):
     data = User.query.get(phone)
@@ -136,7 +140,8 @@ def get_schedule():
 
 @app.route("/getSchedule/<phone>", methods=["GET"])
 def schedule_detail(phone):
-    schedule = Schedule.query.get(phone)
+    user = User.query.get(phone)
+    schedule = Schedule.query.get(user.user_id)
     return schedule_schema.jsonify(schedule)
 
 
@@ -144,8 +149,8 @@ def schedule_detail(phone):
 # endpoint to update schedule
 @app.route("/updateSchedule/<phone>", methods=["PUT"])
 def schedule_update(phone):
-    schedule = Schedule.query.get(phone)
-
+    user = User.query.get(phone)
+    schedule = Schedule.query.get(user.user_id)
     schedule_id = request.form['schedule_id']                                                                                    
     menu_data_dump = request.form['menu_data_dump']
     chef_id = request.form['chef_id']                          
@@ -169,7 +174,8 @@ def schedule_update(phone):
 
 @app.route("/deleteSchedule/<phone>", methods=["DELETE"])
 def schedule_delete(phone):
-    schedule = Schedule.query.get(phone)
+    user = User.query.get(phone)
+    schedule = Schedule.query.get(user.user_id)
     db.session.delete(schedule)
     db.session.commit()
 
@@ -199,9 +205,10 @@ def addOrder():
 
 
 
-@app.route("/getUserOrder/<ids>", methods=["GET"])
-def orders_detail(ids):
-    orders = Order.query.filter_by(order_id=ids).first()
+@app.route("/getUserOrder/<phone>", methods=["GET"])
+def orders_detail(phone):
+    user = User.query.get(phone)
+    order = Order.query.get(user.user_id)
     return order_schema.jsonify(orders)
 
 
@@ -236,15 +243,17 @@ def addMenu():
 
 
 
-@app.route("/getMenu/<ids>", methods=["GET"])
-def menus_detail(ids):
-    menus = Menu.query.filter_by(menu_id=ids).first()
+@app.route("/getMenu/<phone>", methods=["GET"])
+def menus_detail(phone):
+    user = User.query.get(phone)
+    menus = Menu.query.get(user.user_id)
     return menu_schema.jsonify(menus)
 
 
 @app.route("/updateMenu/<phone>", methods=["PUT"])
 def menu_update(phone):
-    menu = Menu.query.get(phone)
+    user = User.query.get(phone)
+    menus = Menu.query.get(user.user_id)
 
     menu_id = request.form['menu_id']                              
     chef_id = request.form['chef_id']                                               
