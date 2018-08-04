@@ -159,8 +159,8 @@ def schedule_update(phone):
     merchant_id = request.form['merchant_id']                                    
     amount = request.form['amount_id']             
     total_amount = request.form['total_amount']                     
-    date  = request.form['date']
-
+    x  = request.form['date']
+    date = datetime.strptime(x , '%b %d %Y %I:%M%p')
 
     schedule.schedule_id = schedule_id
     schedule.menu_data_dump = menu_data_dump
@@ -204,16 +204,16 @@ def addOrder():
 
     db.session.add(new_order)
     db.session.commit()
-    return jsonify(new_order)
+    return order_schema.jsonify(new_order)
 
 
 
 @app.route("/getUserOrder/<phone>", methods=["GET"])
 def orders_detail(phone):
     user = User.query.get(phone)
-    chef_id = user.user_id 
+    chef_id = user.user_id
     order = Order.query.get(chef_id)
-    return order_schema.jsonify(orders)
+    return order_schema.jsonify(order)
 
 
 
@@ -241,7 +241,7 @@ def addMenu():
 
     db.session.add(new_menu)
     db.session.commit()
-    return jsonify(new_menu)
+    return menu_schema.jsonify(new_menu)
 
 
 
